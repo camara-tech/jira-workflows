@@ -1,0 +1,50 @@
+name: Create Issue Action Workflow
+on:
+  issues:
+    types: ['opened', 'reopened']
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+        default: "Mon"
+      issuetype:
+        required: true
+        type: string
+        default: "Story"
+      summary:
+        required: true
+        type: string
+        default: "This is a test"
+      description: 
+        type: string
+      fields:
+        type: string
+      secrets: 
+        JIRA_BASE_URL:
+          required: true
+        JIRA_USER_EMAIL:
+          required: true
+        JIRA_API_TOKEN:
+          required: true
+
+jobs:
+  create_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Atlassian Jira
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      - name: Create Issue 
+        uses: atlassian/gajira-create@v3
+        with:
+          project: ${{ inputs.project }}
+          issuetype: ${{ inputs.issue-type }}
+          summary: ${{ inputs.summary }}
+          description: ${{ inputs.description }}
+          fields: ${{ inputs.fields }} 
+
